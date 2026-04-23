@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bippy Meets Belinda Bee Latest Review Gallery</title>
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <style>
+    :root {
+      --paper: #fffaf0;
+      --ink: #2f251c;
+      --muted: #6c5d4f;
+      --accent: #c85b35;
+      --line: #ddcdb6;
+      --good: #357a38;
+      --warn: #a86a13;
+      --bad: #a33636;
+      --review: #5d5aa2;
+      --shadow: 0 16px 40px rgba(79, 54, 30, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 244, 215, 0.85), transparent 35%),
+        linear-gradient(180deg, #fbf6ea 0%, #f5ecda 100%);
+    }
+
+    .shell {
+      width: min(1380px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(255, 251, 240, 0.96), rgba(255, 239, 209, 0.96));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 80ch;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .hero .subnote {
+      margin-top: 12px;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr 1fr auto auto auto;
+      gap: 12px;
+      align-items: center;
+      background: rgba(255, 250, 240, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 20px;
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+
+    .field,
+    .toolbar button {
+      min-height: 46px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .field {
+      width: 100%;
+      padding: 10px 12px;
+    }
+
+    .toolbar button {
+      padding: 0 16px;
+      cursor: pointer;
+    }
+
+    .toolbar .primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 240, 0.92);
+      padding: 8px 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot.approved { background: var(--good); }
+    .dot.edit { background: var(--warn); }
+    .dot.recreate { background: var(--bad); }
+    .dot.review { background: var(--review); }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      display: grid;
+      gap: 14px;
+      background: rgba(255, 250, 240, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    .card.hidden {
+      display: none;
+    }
+
+    .thumb {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 1px solid rgba(137, 110, 81, 0.18);
+      background: #f0e1c3;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .meta h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .type {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge.approved {
+      background: rgba(53, 122, 56, 0.12);
+      color: var(--good);
+    }
+
+    .badge.needs-edit {
+      background: rgba(168, 106, 19, 0.14);
+      color: var(--warn);
+    }
+
+    .badge.recreate {
+      background: rgba(163, 54, 54, 0.13);
+      color: var(--bad);
+    }
+
+    .badge.in-review {
+      background: rgba(109, 106, 159, 0.12);
+      color: var(--review);
+    }
+
+    .text-block {
+      background: rgba(246, 234, 213, 0.65);
+      border: 1px solid rgba(204, 181, 151, 0.7);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .text-label {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .text-block p {
+      margin: 0;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .controls select,
+    .controls textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .controls select {
+      min-height: 44px;
+      padding: 10px 12px;
+    }
+
+    .controls textarea {
+      min-height: 108px;
+      padding: 12px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1100px) {
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100% - 20px, 1380px);
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <h1>Bippy Meets Belinda Bee Latest Review Gallery</h1>
+      <p>
+        Review the latest illustration set in reading order, compare each illustration against its page text,
+        and mark whether it is approved, needs edits, or should be recreated. Notes save automatically in this browser.
+      </p>
+      <div class="subnote">Latest review bundle: covers plus pages 01-24</div>
+    </section>
+
+    <section class="toolbar">
+      <input id="searchInput" class="field" type="search" placeholder="Search by page number, page type, or text">
+      <select id="statusFilter" class="field">
+        <option value="all">All statuses</option>
+        <option value="in-review">In review</option>
+        <option value="approved">Approved</option>
+        <option value="needs-edit">Needs edit</option>
+        <option value="recreate">Recreate</option>
+      </select>
+      <select id="typeFilter" class="field">
+        <option value="all">All page types</option>
+        <option value="Cover">Cover</option>
+        <option value="Character scene">Character scene</option>
+        <option value="Nature/action scene">Nature/action scene</option>
+        <option value="Educational visualization">Educational visualization</option>
+        <option value="Imagination page">Imagination page</option>
+        <option value="Rhythm reset / transition">Rhythm reset / transition</option>
+      </select>
+      <button id="exportBtn" class="primary">Export Notes</button>
+      <button id="expandBtn">Expand All Text</button>
+      <button id="resetBtn">Reset Notes</button>
+    </section>
+
+    <div id="summary" class="summary"></div>
+    <section id="gallery" class="gallery"></section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "bippy-belinda-review-notes-v2";
+
+    const pages = [
+      { id: "cover-front", label: "Cover Front", type: "Cover", image: "Final-Page-Review/Cover-Front.png", text: "Front cover illustration for Bippy Meets Belinda Bee." },
+      { id: "page-01", label: "Page 01", type: "Rhythm reset / transition", image: "Final-Page-Review/Page-01.png", text: "Title page concept: Bippy entering the spring meadow at the beginning of the story." },
+      { id: "page-02", label: "Page 02", type: "Rhythm reset / transition", image: "Final-Page-Review/Page-02.png", text: "Front matter page: decorative flowers, honey droplet, and tiny bee motifs for copyright or dedication text." },
+      { id: "page-03", label: "Page 03", type: "Character scene", image: "Final-Page-Review/Page-03.png", text: "Bippy was walking along a path through a meadow full of flowers." },
+      { id: "page-04", label: "Page 04", type: "Rhythm reset / transition", image: "Final-Page-Review/Page-04.png", text: "It was spring, and the blossoms were blooming everywhere." },
+      { id: "page-05", label: "Page 05", type: "Nature/action scene", image: "Final-Page-Review/Page-05.png", text: "As Bippy wandered along, he heard a loud buzzing sound. A honey bee zipped right past his nose." },
+      { id: "page-06", label: "Page 06", type: "Character scene", image: "Final-Page-Review/Page-06.png", text: "\"Whoa!\" Bippy cried. \"What's the rush?\"" },
+      { id: "page-07", label: "Page 07", type: "Character scene", image: "Final-Page-Review/Page-07.png", text: "The bee turned around and came flying back at great speed, stopping just short of Bippy's nose. She hovered there, her wings buzzing quickly, and she looked a little annoyed." },
+      { id: "page-08", label: "Page 08", type: "Imagination page", image: "Final-Page-Review/Page-08.png", text: "Now, we all know that bears and bees cannot usually speak to one another. But Bippy and this bee were a magical pair, and they had the special ability to understand each other." },
+      { id: "page-09", label: "Page 09", type: "Character scene", image: "Final-Page-Review/Page-09.png", text: "The bee looked at Bippy and said, \"It is my job to move quickly, gather nectar, and bring it back to the hive. My name is Belinda Bee, and I did not mean to scare you.\"" },
+      { id: "page-10", label: "Page 10", type: "Character scene", image: "Final-Page-Review/Page-10.png", text: "Bippy laughed. \"I am Bippy Bear,\" he said, \"and you do not scare me.\"" },
+      { id: "page-11", label: "Page 11", type: "Character scene", image: "Final-Page-Review/Page-11.png", text: "Bippy looked at Belinda with curious eyes. \"Where is your hive?\" he asked." },
+      { id: "page-12", label: "Page 12", type: "Character scene", image: "Final-Page-Review/Page-12.png", text: "\"Oh no,\" Belinda Bee replied. \"You are a bear, and I know bears love the honey produced in my hive.\"" },
+      { id: "page-13", label: "Page 13", type: "Nature/action scene", image: "Final-Page-Review/Page-13.png", text: "\"Not me,\" said Bippy. \"I am only curious about your hive. I see so many bees rushing about and speeding off in the same direction.\"" },
+      { id: "page-14", label: "Page 14", type: "Character scene", image: "Final-Page-Review/Page-14.png", text: "Belinda Bee studied Bippy carefully. Then, with a soft humming of her wings, she decided it was safe to tell him about the hive." },
+      { id: "page-15", label: "Page 15", type: "Nature/action scene", image: "Final-Page-Review/Page-15.png", text: "\"To begin,\" Belinda said, \"we all have jobs to do. I am what is called a worker bee. I collect nectar and pollen from flowers and plants, then bring it back to the hive. Many of us do this all day long, because it takes a great deal of nectar and pollen to make honey.\"" },
+      { id: "page-16", label: "Page 16", type: "Character scene", image: "Final-Page-Review/Page-16.png", text: "Bippy listened closely." },
+      { id: "page-17", label: "Page 17", type: "Educational visualization", image: "Final-Page-Review/Page-17.png", text: "Belinda continued, \"The queen bee lays eggs inside the combs. Worker bees take care of the hive, clean it, build the honeycombs, and protect the baby bees growing inside. Some bees also help find new flowers filled with nectar.\"" },
+      { id: "page-18", label: "Page 18", type: "Character scene", image: "Final-Page-Review/Page-18.png", text: "Bippy's eyes grew wide. \"That sounds like a lot of work!\"" },
+      { id: "page-19", label: "Page 19", type: "Educational visualization", image: "Final-Page-Review/Page-19.png", text: "\"It is,\" said Belinda. \"Keeping a hive going is a community effort. Every bee has a job, and every job is important.\"" },
+      { id: "page-20", label: "Page 20", type: "Educational visualization", image: "Final-Page-Review/Page-20.png", text: "She buzzed in a little circle before going on. \"There are also drones in the hive. Drones are male bees. Their job is different from the worker bees. And there is only one active queen in each hive. She is larger than the other bees, and she lays the eggs that help the hive grow.\"" },
+      { id: "page-21", label: "Page 21", type: "Imagination page", image: "Final-Page-Review/Page-21.png", text: "Bippy thought that was very interesting. Belinda nodded and said, \"Some of the food made by worker bees becomes royal jelly. Royal jelly is used to feed the queen and help raise future queen bees. Some combs are made larger than others so new queens can grow there safely.\"" },
+      { id: "page-22", label: "Page 22", type: "Character scene", image: "Final-Page-Review/Page-22.png", text: "\"Oh, how interesting,\" said Bippy. \"Yes,\" Belinda replied. \"It is hard work, but it is important work. We all work together to keep the hive alive.\"" },
+      { id: "page-23", label: "Page 23", type: "Character scene", image: "Final-Page-Review/Page-23.png", text: "Bippy smiled. \"Thank you, Belinda. I have learned so much about bees and honey.\" Then he hesitated for a moment. \"I must leave now,\" he said, \"but before I go... do you think I could have just a little bit of honey?\" Belinda looked at him and seemed a bit annoyed. \"Okay,\" she said at last, \"but only a taste!\" Bippy tasted the honey and smiled. It was sweet and golden and delicious." },
+      { id: "page-24", label: "Page 24", type: "Rhythm reset / transition", image: "Final-Page-Review/Page-24.png", text: "Then he continued down the path, the taste of honey lingering on his lips, happy that he had learned something new and made a new friend." },
+      { id: "cover-back", label: "Cover Back", type: "Cover", image: "Final-Page-Review/Cover-Back.png", text: "Back cover illustration for Bippy Meets Belinda Bee." }
+    ];
+
+    const defaultState = Object.fromEntries(pages.map((page) => [page.id, { status: "in-review", notes: "" }]));
+
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+    const typeFilter = document.getElementById("typeFilter");
+    const exportBtn = document.getElementById("exportBtn");
+    const expandBtn = document.getElementById("expandBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const summary = document.getElementById("summary");
+    const gallery = document.getElementById("gallery");
+
+    let expanded = false;
+    let reviewState = loadState();
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        return { ...structuredClone(defaultState), ...saved };
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(reviewState));
+      renderSummary();
+    }
+
+    function statusLabel(status) {
+      const labels = {
+        "in-review": "In Review",
+        "approved": "Approved",
+        "needs-edit": "Needs Edit",
+        "recreate": "Recreate"
+      };
+      return labels[status] || status;
+    }
+
+    function renderSummary() {
+      const counts = { "in-review": 0, "approved": 0, "needs-edit": 0, "recreate": 0 };
+      Object.values(reviewState).forEach((entry) => {
+        counts[entry.status] = (counts[entry.status] || 0) + 1;
+      });
+
+      summary.innerHTML = `
+        <div class="chip"><span class="dot review"></span>${counts["in-review"]} in review</div>
+        <div class="chip"><span class="dot approved"></span>${counts["approved"]} approved</div>
+        <div class="chip"><span class="dot edit"></span>${counts["needs-edit"]} need edits</div>
+        <div class="chip"><span class="dot recreate"></span>${counts["recreate"]} recreate</div>
+      `;
+    }
+
+    function renderGallery() {
+      gallery.innerHTML = "";
+
+      pages.forEach((page) => {
+        const state = reviewState[page.id] || { status: "in-review", notes: "" };
+        const article = document.createElement("article");
+        article.className = "card";
+        article.dataset.page = page.label;
+        article.dataset.type = page.type;
+        article.dataset.status = state.status;
+        article.innerHTML = `
+          <img class="thumb" src="${page.image}" alt="${page.label} illustration">
+          <div class="meta">
+            <div>
+              <div class="type">${page.type}</div>
+              <h2>${page.label}</h2>
+            </div>
+            <span class="badge ${state.status}">${statusLabel(state.status)}</span>
+          </div>
+          <div class="text-block">
+            <div class="text-label">Page Text</div>
+            <p>${page.text}</p>
+          </div>
+          <div class="controls">
+            <select aria-label="Status for ${page.label}">
+              <option value="in-review">In Review</option>
+              <option value="approved">Approved</option>
+              <option value="needs-edit">Needs Edit</option>
+              <option value="recreate">Recreate</option>
+            </select>
+            <textarea aria-label="Notes for ${page.label}" placeholder="Add notes about edits, issues, or layout concerns..."></textarea>
+          </div>
+          <div class="footer-note">Auto-saves in this browser. Use Export Notes to download a JSON snapshot.</div>
+        `;
+
+        const select = article.querySelector("select");
+        const textarea = article.querySelector("textarea");
+        const badge = article.querySelector(".badge");
+        const text = article.querySelector(".text-block p");
+
+        select.value = state.status;
+        textarea.value = state.notes;
+        text.style.maxHeight = expanded ? "none" : "9.6em";
+        text.style.overflow = expanded ? "visible" : "hidden";
+
+        select.addEventListener("change", () => {
+          reviewState[page.id].status = select.value;
+          article.dataset.status = select.value;
+          badge.className = `badge ${select.value}`;
+          badge.textContent = statusLabel(select.value);
+          saveState();
+          applyFilters();
+        });
+
+        textarea.addEventListener("input", () => {
+          reviewState[page.id].notes = textarea.value;
+          saveState();
+        });
+
+        gallery.appendChild(article);
+      });
+
+      applyFilters();
+      renderSummary();
+    }
+
+    function applyFilters() {
+      const query = searchInput.value.trim().toLowerCase();
+      const status = statusFilter.value;
+      const type = typeFilter.value;
+
+      [...gallery.children].forEach((card) => {
+        const pageLabel = card.dataset.page;
+        const page = pages.find((item) => item.label === pageLabel);
+        const haystack = `${pageLabel} ${page.type} ${page.text}`.toLowerCase();
+        const matchesQuery = !query || haystack.includes(query);
+        const matchesStatus = status === "all" || card.dataset.status === status;
+        const matchesType = type === "all" || card.dataset.type === type;
+        card.classList.toggle("hidden", !(matchesQuery && matchesStatus && matchesType));
+      });
+    }
+
+    function exportNotes() {
+      const exportData = pages.map((page) => ({
+        id: page.id,
+        page: page.label,
+        type: page.type,
+        image: page.image,
+        text: page.text,
+        status: reviewState[page.id].status,
+        notes: reviewState[page.id].notes
+      }));
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "bippy-belinda-review-notes.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function resetNotes() {
+      if (!confirm("Reset all statuses and notes for this gallery?")) {
+        return;
+      }
+
+      reviewState = structuredClone(defaultState);
+      saveState();
+      renderGallery();
+    }
+
+    searchInput.addEventListener("input", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+    typeFilter.addEventListener("change", applyFilters);
+    exportBtn.addEventListener("click", exportNotes);
+    resetBtn.addEventListener("click", resetNotes);
+    expandBtn.addEventListener("click", () => {
+      expanded = !expanded;
+      expandBtn.textContent = expanded ? "Collapse Text" : "Expand All Text";
+      renderGallery();
+    });
+
+    renderGallery();
+  </script>
+</body>
+</html>
